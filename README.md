@@ -9,3 +9,5 @@ This allows to embed the transformation in the type domain. To avoid requiring t
 This can be done automatically using the TransformedCartesianContructor function which takes as input the rotation (from bare Cartesian to the transformed CRS) and the origin of the transformed CRS (as a Cartesian). Optionally it also accepts a custom name for the transformation to customize the show methods.
 
 For more specific transformation this approach also allows to create more appropriate dispatch methods like for the ECEF case.
+
+Check the [example_notebook](https://rawcdn.githack.com/disberd/TransformedCartesianCRS.jl/91d71a05fe86919343ae150cd82fc1722bc1e18b/example_notebook.html) for a very simple example.
