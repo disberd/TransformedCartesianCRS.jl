@@ -1,8 +1,9 @@
 function Base.convert(T::Type{TransformedCartesian{Identifier,Datum,N,L}}, c::Cartesian) where {Identifier,Datum,N,L}
-    v = raw(cart) |> SVector
-    R, origin = rotation_origin(T)
-    transformed = R * v + origin
-    T(transformed...)
+    v = raw(c) |> SVector
+    R, origin = rotation_origin(TransformedCartesian{Identifier})
+    transformed = R * (v - origin)
+    coords = map(Base.Fix2(addunit, m), Tuple(transformed))
+    T(coords)
 end
 Base.convert(T::Type{TransformedCartesian{Identifier, Datum, N}}, c::Cartesian) where {Identifier,Datum,N} =
     convert(TransformedCartesian{Identifier,Datum,N,lentype(typeof(c))}, c)
@@ -12,7 +13,7 @@ Base.convert(T::Type{TransformedCartesian{Identifier}}, c::Cartesian) where {Ide
 function Base.convert(T::Type{Cartesian{Datum,N,L}}, tc::TransformedCartesian{Identifier, Datum, N}) where {Identifier,Datum,N,L}
     transformed = raw(tc) |> SVector
     R, origin = rotation_origin(TransformedCartesian{Identifier})
-    cart = R' * (transformed - origin)
+    cart = R' * transformed + origin
     T(map(Base.Fix2(addunit, m), Tuple(cart)))
 end
 Base.convert(T::Type{Cartesian}, tc::TransformedCartesian{Identifier,Datum,N,L}) where {Identifier,Datum,N,L} =

@@ -10,7 +10,7 @@ TransformedCartesian{Identifier, Datum, N}(args...) where {Identifier, Datum, N}
 
 TransformedCartesian{Identifier, Datum}(args...) where {Identifier, Datum} = TransformedCartesian{Identifier}(Cartesian{Datum}(args...))
 
-TransformedCartesian{Identifier}(args...) where {Identifier} = TransformedCartesian{Identifier}(Cartesian{default_datum(TransformedCartesian{Identifier})}(args...))
+TransformedCartesian{Identifier}(args...) where {Identifier} = transformed_constructor(TransformedCartesian{Identifier})(args...)
 
 # Stuff copied/adapted from Cartesian
 
@@ -69,15 +69,31 @@ end
 
 # Custom Stuff
 
+function cartesian_origin(::Type{T}) where T <: TransformedCartesian
+    convert(Cartesian, transformed_constructor(T)(0,0,0))
+end
+
 transformed_prettyname(::Type{<:TransformedCartesian}) = "TransformedCartesian"
 	
 transformed_constructor(::Type{TransformedCartesian{Identifier}}) where {Identifier} = error("No constructor is defined for type TransformedCartesian{$Identifier}.\nCreate a constructor first with  the `TransformedCartesianConstructor` function.")
+
 rotation_origin(::Type{TransformedCartesian{Identifier}}) where {Identifier} = error("No rotation origin is defined for type TransformedCartesian{$Identifier}.\nCreate a constructor first with  the `TransformedCartesianConstructor` function.")
 
-default_datum(::Type{<:TransformedCartesian}) = NoDatum
+# Fallbacks
+transformed_constructor(::Type{<:TransformedCartesian{Identifier}}) where Identifier = transformed_constructor(TransformedCartesian{Identifier})
+rotation_origin(::Type{<:TransformedCartesian{Identifier}}) where Identifier = rotation_origin(TransformedCartesian{Identifier})
+rotation_origin(tc::TransformedCartesian) = rotation_origin(typeof(tc))
+
 
 
 # This instantiate a constructor for a TransformedCartesian with a given rotation matrix and origin, and takes care of populating the method for the rotation_origin function and optionaly customize the print name
+"""
+    TransformedCartesianConstructor(rotation, origin::Cartesian; name::Union{Nothing, String} = nothing)
+
+Creates a constructor for a TransformedCartesian CRS with a given rotation matrix and origin, and takes care of populating the method for the rotation_origin function and optionaly customize the print name.
+
+The rotation is intended to rotate from the standard Cartesian CRS to the custom one.
+"""
 function TransformedCartesianConstructor(rotation, origin::Cartesian; name::Union{Nothing, String} = nothing)
 	C = typeof(origin)
 	Datum = datum(C)
@@ -86,10 +102,10 @@ function TransformedCartesianConstructor(rotation, origin::Cartesian; name::Unio
 	Identifier = hash(R, hash(origin))
 	raw_coords = raw(origin) |> SVector{3, Float64}
 	# We add a method to the rotation_origin function
-	@eval rotation_origin(::TransformedCartesian{$Identifier}) = ($R, $raw_coords)
-    @eval transformed_constructor(::TransformedCartesian{$Identifier}) = TransformedCartesian{$Identifier, $Datum, $N}
+	@eval rotation_origin(::Type{TransformedCartesian{$Identifier}}) = ($R, $raw_coords)
+    @eval transformed_constructor(::Type{TransformedCartesian{$Identifier}}) = TransformedCartesian{$Identifier, $Datum, $N}
 	if name !== nothing
-		@eval _transformed_prettyname(::Type{TransformedCartesian{$Identifier}}) = $name
+		@eval transformed_prettyname(::Type{TransformedCartesian{$Identifier}}) = $name
 	end
 	# Return the related constructor
 	TransformedCartesian{Identifier, Datum, N}
