@@ -1,0 +1,1 @@
+This is a package to test implementation of TransformedCartesian CRS types inspired by https://github.com/JuliaEarth/CoordRefSystems.jl/issues/48

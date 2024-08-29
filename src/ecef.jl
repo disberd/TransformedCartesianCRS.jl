@@ -3,6 +3,7 @@ struct ECEFIdentifier end
 rotation_origin(::Type{ECEFIdentifier}) = one(RotMatrix{3, Float64}), zero(SVector{3, Float64})	
 default_datum(::Type{ECEFIdentifier}) = WGS84Latest
 transformed_prettyname(::Type{ECEFIdentifier}) = "ECEF"
+transformed_constructor(::Type{ECEFIdentifier}) = TransformedCartesian{ECEFIdentifier}
 	
 const ECEF = TransformedCartesian{ECEFIdentifier}
 

@@ -71,8 +71,8 @@ end
 
 transformed_prettyname(::Type{<:TransformedCartesian}) = "TransformedCartesian"
 	
-transformed_constructor(::Type{TransformedCartesian{Identifier}}) where {Identifier} = error("No constructor is defined for type TransformedCartesian{$Identifier}")
-rotation_origin(::Type{TransformedCartesian{Identifier}}) where {Identifier} = error("No rotation origin is defined for type TransformedCartesian{$Identifier}")
+transformed_constructor(::Type{TransformedCartesian{Identifier}}) where {Identifier} = error("No constructor is defined for type TransformedCartesian{$Identifier}.\nCreate a constructor first with  the `TransformedCartesianConstructor` function.")
+rotation_origin(::Type{TransformedCartesian{Identifier}}) where {Identifier} = error("No rotation origin is defined for type TransformedCartesian{$Identifier}.\nCreate a constructor first with  the `TransformedCartesianConstructor` function.")
 
 default_datum(::Type{<:TransformedCartesian}) = NoDatum
 
