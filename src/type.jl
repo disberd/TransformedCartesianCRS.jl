@@ -50,8 +50,10 @@ function CoordRefSystems.tol(coords::TransformedCartesian)
   atol(numtype(Q)) * unit(Q)
 end
 
-Random.rand(rng::Random.AbstractRNG, ::Type{TransformedCartesian{Identifier, Datum,N}}) where {Identifier, Datum,N} =
-  TransformedCartesian{Datum}(rng, rand(Cartesian{Datum, N}))
+function Random.rand(rng::Random.AbstractRNG, ::Type{TransformedCartesian{Identifier, Datum, N}}) where {Identifier, Datum,N}
+    cart = rand(rng, Cartesian{Datum, N})
+    TransformedCartesian{Identifier, Datum, N}(_coords(cart))
+end
 
 CoordRefSystems._coords(coords::TransformedCartesian) = getfield(coords, :coords)
 
