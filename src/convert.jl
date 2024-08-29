@@ -20,8 +20,8 @@ Base.convert(T::Type{Cartesian}, tc::TransformedCartesian{Identifier,Datum,N,L})
     convert(Cartesian{Datum,N,L}, tc)
 
 # Conversion between TransformedCartesian
-Base.convert(::Type{TransformedCartesian{Identifier}}, tc::TransformedCartesian{Identifier}) where {Identifier} = tc
-function Base.convert(::Type{TransformedCartesian{Identifier}}, tc::TransformedCartesian) where {Identifier}
+Base.convert(::Type{TransformedCartesian{Identifier, Datum, N}}, tc::TransformedCartesian{Identifier, Datum, N}) where {Identifier, Datum, N} = tc
+function Base.convert(::Type{TransformedCartesian{Identifier, Datum, N}}, tc::TransformedCartesian) where {Identifier, Datum, N}
     cart = convert(Cartesian, tc)
-    convert(TransformedCartesian{Identifier}, cart)
+    convert(TransformedCartesian{Identifier, Datum, N}, cart)
 end

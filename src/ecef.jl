@@ -12,4 +12,4 @@ ECEF(cart::Cartesian{Datum, 3, L}) where {Datum, L} = TransformedCartesian{ECEFI
 # Specific simpler methods between Cartesian and ECEF
 Base.convert(::Type{Cartesian}, ecef::TransformedCartesian{<:ECEFIdentifier,Datum,N,L}) where {Datum,N,L} = Cartesian{Datum,N,L}(_coords(ecef))
 Base.convert(::Type{ECEF}, cart::Cartesian) = ECEF(cart)
-Base.convert(::Type{ECEF}, tc::TransformedCartesian{<:Any, Datum}) where {Datum} = convert(TransformedCartesian{ECEFIdentifier{Datum}}, tc)
+Base.convert(::Type{ECEF}, tc::TransformedCartesian{<:Any, Datum}) where {Datum} = convert(ECEF{Datum}, tc)
